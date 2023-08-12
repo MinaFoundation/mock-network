@@ -50,9 +50,6 @@ pub struct CreateNetworkArgs {
 
     #[clap(short = 'g', long)]
     pub genesis_ledger: std::path::PathBuf,
-
-    #[clap(flatten)]
-    pub network_id: NetworkId,
 }
 
 #[derive(Subcommand)]
@@ -61,8 +58,14 @@ pub enum NodeCommand {
     Start(NodeCommandWithCommitArgs),
     /// Stop a node
     Stop(NodeCommandArgs),
+    /// Get data from an archive node
+    DumpArchiveData(NodeCommandArgs),
     /// Get logs from a node
-    Logs(NodeCommandArgs),
+    DumpMinaLogs(NodeCommandArgs),
+    /// Get precomputed blocks from a node
+    DumpPrecomputedBlocks(NodeCommandArgs),
+    /// Get logs by replaying an archive node's database
+    RunReplayer(NodeCommandArgs),
 }
 
 #[derive(Args, Debug)]
@@ -120,7 +123,7 @@ impl NodeCommandWithCommitArgs {
 
 impl CreateNetworkArgs {
     pub fn network_id(&self) -> &str {
-        &self.network_id.network_id
+        "network0"
     }
 }
 
@@ -133,7 +136,6 @@ mod tests {
     fn test_network_create_command() {
         let topology_file = "/path/to/topology";
         let genesis_file = "/path/to/genesis/ledger";
-        let network_id = "test";
         let args = vec![
             "mock",
             "network",
@@ -142,8 +144,6 @@ mod tests {
             topology_file,
             "--genesis-ledger",
             genesis_file,
-            "--network-id",
-            network_id,
         ];
         let cli = Cli::parse_from(args);
 
@@ -151,7 +151,6 @@ mod tests {
             Command::Network(NetworkCommand::Create(args)) => {
                 assert_eq!(args.topology, PathBuf::from(topology_file));
                 assert_eq!(args.genesis_ledger, PathBuf::from(genesis_file));
-                assert_eq!(args.network_id(), network_id);
             }
             _ => panic!("Unexpected command parsed"),
         }
@@ -250,11 +249,11 @@ mod tests {
     #[test]
     fn test_node_logs_command() {
         let node_id = "test";
-        let args = vec!["mock", "node", "logs", "--node-id", node_id];
+        let args = vec!["mock", "node", "dump-mina-logs", "--node-id", node_id];
         let cli = Cli::parse_from(args);
 
         match cli.command {
-            Command::Node(NodeCommand::Logs(args)) => {
+            Command::Node(NodeCommand::DumpMinaLogs(args)) => {
                 assert_eq!(args.node_id(), node_id);
                 assert_eq!(args.network_id(), "default");
             }

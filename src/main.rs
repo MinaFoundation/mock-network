@@ -15,32 +15,35 @@ fn main() {
     match cli.command {
         Command::Network(net_cmd) => match net_cmd {
             NetworkCommand::Create(cmd) => {
+                let success = rand::random::<bool>();
                 let network_id = cmd.network_id().to_string();
-                let res = NetworkCreate {
-                    network_id: network_id.clone(),
-                    node_map: node_map(network_id),
-                };
-                pretty_print(&res);
+                if success {
+                    let res = NetworkCreate {
+                        network_id: network_id.clone(),
+                        node_map: node_map(network_id),
+                    };
+                    pretty_print(&res);
+                } else {
+                    let error = Error { network_id };
+                    pretty_print(&error);
+                }
+            }
+            NetworkCommand::Start(cmd) => {
+                let success = rand::random::<bool>();
+                let network_id = cmd.network_id;
+                if success {
+                    let res = NetworkStart { network_id };
+                    pretty_print(&res);
+                } else {
+                    let error = Error { network_id };
+                    pretty_print(&error);
+                }
             }
             NetworkCommand::Delete(cmd) => {
                 let res = NetworkDelete {
                     network_id: cmd.network_id,
                 };
                 pretty_print(&res);
-            }
-            NetworkCommand::Start(cmd) => {
-                let success = rand::random::<bool>();
-                if success {
-                    let res = NetworkStart {
-                        network_id: cmd.network_id,
-                    };
-                    pretty_print(&res);
-                } else {
-                    let error = Error {
-                        network_id: cmd.network_id,
-                    };
-                    pretty_print(&error);
-                }
             }
             NetworkCommand::Stop(cmd) => {
                 let success = rand::random::<bool>();
@@ -89,8 +92,32 @@ fn main() {
                 };
                 pretty_print(&res);
             }
-            NodeCommand::Logs(cmd) => {
-                let res = NodeLogs {
+            NodeCommand::DumpArchiveData(cmd) => {
+                let res = ArchiveData {
+                    data: String::from("datum0\ndatum1\ndatum2"),
+                    network_id: cmd.network_id().to_string(),
+                    node_id: cmd.node_id().to_string(),
+                };
+                pretty_print(&res);
+            }
+            NodeCommand::DumpMinaLogs(cmd) => {
+                let res = MinaLogs {
+                    logs: String::from("log0\nlog1\nlog2"),
+                    network_id: cmd.network_id().to_string(),
+                    node_id: cmd.node_id().to_string(),
+                };
+                pretty_print(&res);
+            }
+            NodeCommand::DumpPrecomputedBlocks(cmd) => {
+                let res = PrecomputedBlocks {
+                    blocks: String::from("block0\nblock1\nblock2"),
+                    network_id: cmd.network_id().to_string(),
+                    node_id: cmd.node_id().to_string(),
+                };
+                pretty_print(&res);
+            }
+            NodeCommand::RunReplayer(cmd) => {
+                let res = ReplayerLogs {
                     logs: String::from("log0\nlog1\nlog2"),
                     network_id: cmd.network_id().to_string(),
                     node_id: cmd.node_id().to_string(),
