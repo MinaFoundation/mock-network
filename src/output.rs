@@ -1,10 +1,14 @@
 use serde::Serialize;
-use std::collections::HashMap;
 
 #[derive(Debug, Serialize)]
 pub struct NetworkCreate {
     pub network_id: String,
-    pub node_map: HashMap<String, NodeInfo>,
+    pub node_map: std::collections::HashMap<String, NodeInfo>,
+}
+
+#[derive(Debug, Serialize)]
+pub struct NetworkDelete {
+    pub network_id: String,
 }
 
 #[derive(Debug, Serialize)]
@@ -14,11 +18,6 @@ pub struct NetworkStart {
 
 #[derive(Debug, Serialize)]
 pub struct NetworkStop {
-    pub network_id: String,
-}
-
-#[derive(Debug, Serialize)]
-pub struct NetworkDelete {
     pub network_id: String,
 }
 
@@ -61,10 +60,31 @@ pub struct NodeStop {
 }
 
 #[derive(Debug, Serialize)]
-pub struct NodeLogs {
+pub struct ArchiveData {
+    pub data: String,
     pub network_id: String,
     pub node_id: String,
+}
+
+#[derive(Debug, Serialize)]
+pub struct MinaLogs {
     pub logs: String,
+    pub network_id: String,
+    pub node_id: String,
+}
+
+#[derive(Debug, Serialize)]
+pub struct PrecomputedBlocks {
+    pub blocks: String,
+    pub network_id: String,
+    pub node_id: String,
+}
+
+#[derive(Debug, Serialize)]
+pub struct ReplayerLogs {
+    pub logs: String,
+    pub network_id: String,
+    pub node_id: String,
 }
 
 #[derive(Debug, Serialize)]
@@ -89,4 +109,7 @@ impl_display!(NetworkStop);
 impl_display!(NetworkStatus);
 impl_display!(NodeStart);
 impl_display!(NodeStop);
-impl_display!(NodeLogs);
+impl_display!(ArchiveData);
+impl_display!(MinaLogs);
+impl_display!(PrecomputedBlocks);
+impl_display!(ReplayerLogs);
