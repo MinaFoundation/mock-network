@@ -4,7 +4,7 @@ use clap::{Args, Parser, Subcommand};
 #[command(
     author,
     version,
-    about = "mock - A Command-line Tool for Mock Mina Networks to Test the Abstract Engine"
+    about = "mock - A Command-line Tool for a Mock Mina Network to Test the Abstract Engine"
 )]
 #[command(propagate_version = true)]
 pub struct Cli {
@@ -45,11 +45,17 @@ pub struct NetworkId {
 
 #[derive(Args)]
 pub struct CreateNetworkArgs {
+    /// Network identifier
+    #[clap(short = 'n', long)]
+    pub network_id: String,
+
+    /// Genesis ledger, constants, proof config, block producers, etc (JSON)
+    #[clap(short = 'c', long)]
+    pub test_config: std::path::PathBuf,
+
+    /// Number of each type of node in the network (JSON)
     #[clap(short = 't', long)]
     pub topology: std::path::PathBuf,
-
-    #[clap(short = 'g', long)]
-    pub genesis_ledger: std::path::PathBuf,
 }
 
 #[derive(Subcommand)]
@@ -121,12 +127,6 @@ impl NodeCommandWithCommitArgs {
     }
 }
 
-impl CreateNetworkArgs {
-    pub fn network_id(&self) -> &str {
-        "network0"
-    }
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -134,23 +134,26 @@ mod tests {
 
     #[test]
     fn test_network_create_command() {
+        let network_id = "network0";
+        let test_config_file = "/path/to/test/config";
         let topology_file = "/path/to/topology";
-        let genesis_file = "/path/to/genesis/ledger";
         let args = vec![
             "mock",
             "network",
             "create",
+            "--network-id",
+            network_id,
             "--topology",
             topology_file,
-            "--genesis-ledger",
-            genesis_file,
+            "--test-config",
+            test_config_file,
         ];
         let cli = Cli::parse_from(args);
 
         match cli.command {
             Command::Network(NetworkCommand::Create(args)) => {
                 assert_eq!(args.topology, PathBuf::from(topology_file));
-                assert_eq!(args.genesis_ledger, PathBuf::from(genesis_file));
+                assert_eq!(args.test_config, PathBuf::from(test_config_file));
             }
             _ => panic!("Unexpected command parsed"),
         }
