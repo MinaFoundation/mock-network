@@ -15,119 +15,80 @@ fn main() {
     match cli.command {
         Command::Network(net_cmd) => match net_cmd {
             NetworkCommand::Create(cmd) => {
-                let success = rand::random::<bool>();
-                let network_id = cmd.network_id().to_string();
-                if success {
-                    let res = NetworkCreate {
-                        network_id: network_id.clone(),
-                        node_map: node_map(network_id),
-                    };
-                    pretty_print(&res);
-                } else {
-                    let error = Error { network_id };
-                    pretty_print(&error);
-                }
+                pretty_print(network::Create {
+                    network_id: cmd.network_id,
+                    node_map: node_map(),
+                });
             }
             NetworkCommand::Start(cmd) => {
-                let success = rand::random::<bool>();
-                let network_id = cmd.network_id;
-                if success {
-                    let res = NetworkStart { network_id };
-                    pretty_print(&res);
-                } else {
-                    let error = Error { network_id };
-                    pretty_print(&error);
-                }
+                pretty_print(network::Start {
+                    network_id: cmd.network_id,
+                });
             }
             NetworkCommand::Delete(cmd) => {
-                let res = NetworkDelete {
+                pretty_print(network::Delete {
                     network_id: cmd.network_id,
-                };
-                pretty_print(&res);
+                });
             }
             NetworkCommand::Stop(cmd) => {
-                let success = rand::random::<bool>();
-                if success {
-                    let res = NetworkStop {
-                        network_id: cmd.network_id,
-                    };
-                    pretty_print(&res);
-                } else {
-                    let error = Error {
-                        network_id: cmd.network_id,
-                    };
-                    pretty_print(&error);
-                }
+                pretty_print(network::Stop {
+                    network_id: cmd.network_id,
+                });
             }
             NetworkCommand::Status(cmd) => {
-                let success = rand::random::<bool>();
-                if success {
-                    let res = NetworkStatus {
-                        network_id: cmd.network_id,
-                        status: "status".to_string(),
-                    };
-                    pretty_print(&res);
-                } else {
-                    let error = Error {
-                        network_id: cmd.network_id,
-                    };
-                    pretty_print(&error);
-                }
+                pretty_print(network::Status {
+                    network_id: cmd.network_id,
+                    status: "status".to_string(),
+                });
             }
         },
         Command::Node(node_cmd) => match node_cmd {
             NodeCommand::Start(cmd) => {
-                let res = NodeStart {
+                pretty_print(node::Start {
                     fresh_state: random::<bool>(),
                     git_commit: "abcdef012345".to_string(),
                     network_id: cmd.network_id().to_string(),
                     node_id: cmd.node_id().to_string(),
-                };
-                pretty_print(&res);
+                });
             }
             NodeCommand::Stop(cmd) => {
-                let res = NodeStop {
+                pretty_print(node::Stop {
                     network_id: cmd.network_id().to_string(),
                     node_id: cmd.node_id().to_string(),
-                };
-                pretty_print(&res);
+                });
             }
             NodeCommand::DumpArchiveData(cmd) => {
-                let res = ArchiveData {
+                pretty_print(node::ArchiveData {
                     data: String::from("datum0\ndatum1\ndatum2"),
                     network_id: cmd.network_id().to_string(),
                     node_id: cmd.node_id().to_string(),
-                };
-                pretty_print(&res);
+                });
             }
             NodeCommand::DumpMinaLogs(cmd) => {
-                let res = MinaLogs {
+                pretty_print(node::MinaLogs {
                     logs: String::from("log0\nlog1\nlog2"),
                     network_id: cmd.network_id().to_string(),
                     node_id: cmd.node_id().to_string(),
-                };
-                pretty_print(&res);
+                });
             }
             NodeCommand::DumpPrecomputedBlocks(cmd) => {
-                let res = PrecomputedBlocks {
+                pretty_print(node::PrecomputedBlocks {
                     blocks: String::from("block0\nblock1\nblock2"),
                     network_id: cmd.network_id().to_string(),
                     node_id: cmd.node_id().to_string(),
-                };
-                pretty_print(&res);
+                });
             }
             NodeCommand::RunReplayer(cmd) => {
-                let res = ReplayerLogs {
+                pretty_print(node::ReplayerLogs {
                     logs: String::from("log0\nlog1\nlog2"),
                     network_id: cmd.network_id().to_string(),
                     node_id: cmd.node_id().to_string(),
-                };
-                pretty_print(&res);
+                });
             }
         },
     }
 }
 
-fn pretty_print<T: Serialize>(res: &T) {
-    println!("{}", serde_json::to_string_pretty(res).unwrap());
+fn pretty_print<T: Serialize>(res: T) {
+    println!("{}", serde_json::to_string_pretty(&res).unwrap());
 }
