@@ -5,7 +5,6 @@ mod test_values;
 use clap::Parser;
 use cli::{Cli, Command, NetworkCommand, NodeCommand};
 use output::*;
-use rand::random;
 use serde::Serialize;
 use test_values::*;
 
@@ -45,7 +44,7 @@ fn main() {
         Command::Node(node_cmd) => match node_cmd {
             NodeCommand::Start(cmd) => {
                 pretty_print(node::Start {
-                    fresh_state: random::<bool>(),
+                    fresh_state: cmd.fresh_state.fresh_state,
                     git_commit: "abcdef012345".to_string(),
                     network_id: cmd.network_id().to_string(),
                     node_id: cmd.node_id().to_string(),

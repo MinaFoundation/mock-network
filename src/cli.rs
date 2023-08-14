@@ -77,6 +77,12 @@ pub struct NodeId {
 }
 
 #[derive(Args, Debug)]
+pub struct FreshState {
+    #[clap(short = 'f', long)]
+    pub fresh_state: bool,
+}
+
+#[derive(Args, Debug)]
 pub struct GitCommit {
     #[clap(short = 'g', long)]
     pub git_commit: String,
@@ -93,6 +99,9 @@ pub struct NodeCommandArgs {
 
 #[derive(Args, Debug)]
 pub struct NodeCommandWithCommitArgs {
+    #[clap(flatten)]
+    pub fresh_state: FreshState,
+
     #[clap(flatten)]
     pub git_commit: GitCommit,
 
