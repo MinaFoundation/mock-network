@@ -1,6 +1,6 @@
 pub mod network {
     use serde::Serialize;
-    
+
     #[derive(Debug, Serialize)]
     pub struct Create {
         pub network_id: String,
@@ -35,8 +35,8 @@ pub mod node {
     #[derive(Debug, Serialize)]
     pub struct Info {
         pub graphql_uri: Option<String>,
-        pub network_keypair: Option<String>,
         pub node_type: Type,
+        pub private_key: Option<String>,
     }
 
     #[derive(Debug, Serialize)]

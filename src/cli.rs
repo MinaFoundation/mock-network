@@ -49,13 +49,9 @@ pub struct CreateNetworkArgs {
     #[clap(short = 'n', long)]
     pub network_id: String,
 
-    /// Genesis ledger, constants, proof config, block producers, etc (JSON)
+    /// Genesis ledger, constants, proof config, topology, etc (JSON)
     #[clap(short = 'c', long)]
     pub test_config: std::path::PathBuf,
-
-    /// Number of each type of node in the network (JSON)
-    #[clap(short = 't', long)]
-    pub topology: std::path::PathBuf,
 }
 
 #[derive(Subcommand)]
@@ -136,15 +132,12 @@ mod tests {
     fn test_network_create_command() {
         let network_id = "network0";
         let test_config_file = "/path/to/test/config";
-        let topology_file = "/path/to/topology";
         let args = vec![
             "mock",
             "network",
             "create",
             "--network-id",
             network_id,
-            "--topology",
-            topology_file,
             "--test-config",
             test_config_file,
         ];
@@ -152,7 +145,7 @@ mod tests {
 
         match cli.command {
             Command::Network(NetworkCommand::Create(args)) => {
-                assert_eq!(args.topology, PathBuf::from(topology_file));
+                assert_eq!(args.network_id, network_id);
                 assert_eq!(args.test_config, PathBuf::from(test_config_file));
             }
             _ => panic!("Unexpected command parsed"),
