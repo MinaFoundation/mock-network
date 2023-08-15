@@ -6,7 +6,6 @@ use clap::Parser;
 use cli::{Cli, Command, NetworkCommand, NodeCommand};
 use output::*;
 use serde::Serialize;
-use test_values::*;
 
 fn main() {
     let cli: Cli = Cli::parse();
@@ -16,7 +15,7 @@ fn main() {
             NetworkCommand::Create(cmd) => {
                 pretty_print(network::Create {
                     network_id: cmd.network_id,
-                    node_map: node_map(),
+                    node_map: test_values::node_map(),
                 });
             }
             NetworkCommand::Start(cmd) => {
@@ -37,15 +36,13 @@ fn main() {
             NetworkCommand::Status(cmd) => {
                 pretty_print(network::Status {
                     network_id: cmd.network_id,
-                    status: "status".to_string(),
+                    status: "status0\nstatus1\nstatus2".to_string(),
                 });
             }
         },
         Command::Node(node_cmd) => match node_cmd {
             NodeCommand::Start(cmd) => {
                 pretty_print(node::Start {
-                    fresh_state: cmd.fresh_state.fresh_state,
-                    git_commit: "abcdef012345".to_string(),
                     network_id: cmd.network_id().to_string(),
                     node_id: cmd.node_id().to_string(),
                 });
@@ -58,28 +55,28 @@ fn main() {
             }
             NodeCommand::DumpArchiveData(cmd) => {
                 pretty_print(node::ArchiveData {
-                    data: String::from("datum0\ndatum1\ndatum2"),
+                    data: "datum0\ndatum1\ndatum2".to_string(),
                     network_id: cmd.network_id().to_string(),
                     node_id: cmd.node_id().to_string(),
                 });
             }
             NodeCommand::DumpMinaLogs(cmd) => {
                 pretty_print(node::MinaLogs {
-                    logs: String::from("log0\nlog1\nlog2"),
+                    logs: "log0\nlog1\nlog2".to_string(),
                     network_id: cmd.network_id().to_string(),
                     node_id: cmd.node_id().to_string(),
                 });
             }
             NodeCommand::DumpPrecomputedBlocks(cmd) => {
                 pretty_print(node::PrecomputedBlocks {
-                    blocks: String::from("block0\nblock1\nblock2"),
+                    blocks: "block0\nblock1\nblock2".to_string(),
                     network_id: cmd.network_id().to_string(),
                     node_id: cmd.node_id().to_string(),
                 });
             }
             NodeCommand::RunReplayer(cmd) => {
                 pretty_print(node::ReplayerLogs {
-                    logs: String::from("log0\nlog1\nlog2"),
+                    logs: "log0\nlog1\nlog2".to_string(),
                     network_id: cmd.network_id().to_string(),
                     node_id: cmd.node_id().to_string(),
                 });

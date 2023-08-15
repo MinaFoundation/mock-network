@@ -50,8 +50,6 @@ pub mod node {
 
     #[derive(Debug, Serialize)]
     pub struct Start {
-        pub fresh_state: bool,
-        pub git_commit: String,
         pub network_id: String,
         pub node_id: String,
     }
