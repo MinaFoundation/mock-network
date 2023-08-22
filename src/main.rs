@@ -15,7 +15,7 @@ fn main() {
             NetworkCommand::Create(cmd) => {
                 pretty_print(network::Create {
                     network_id: cmd.network_id,
-                    node_map: test_values::node_map(),
+                    nodes: test_values::node_map(),
                 });
             }
             NetworkCommand::Start(cmd) => {
