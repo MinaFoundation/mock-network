@@ -39,7 +39,7 @@ pub enum NetworkCommand {
 
 #[derive(Args, Debug)]
 pub struct NetworkId {
-    #[clap(short, long, default_value = "default")]
+    #[clap(short, long)]
     pub network_id: String,
 }
 
@@ -61,7 +61,7 @@ pub struct CreateNetworkArgs {
 #[derive(Subcommand)]
 pub enum NodeCommand {
     /// Start a node
-    Start(NodeCommandWithCommitArgs),
+    Start(NodeCommandStartArgs),
     /// Stop a node
     Stop(NodeCommandArgs),
     /// Get data from an archive node
@@ -86,7 +86,6 @@ pub struct FreshState {
     pub fresh_state: bool,
 }
 
-
 #[derive(Args, Debug)]
 pub struct NodeCommandArgs {
     #[clap(flatten)]
@@ -97,7 +96,7 @@ pub struct NodeCommandArgs {
 }
 
 #[derive(Args, Debug)]
-pub struct NodeCommandWithCommitArgs {
+pub struct NodeCommandStartArgs {
     #[clap(flatten)]
     pub fresh_state: FreshState,
 
@@ -118,7 +117,7 @@ impl NodeCommandArgs {
     }
 }
 
-impl NodeCommandWithCommitArgs {
+impl NodeCommandStartArgs {
     pub fn node_id(&self) -> &str {
         &self.node_id.node_id
     }
@@ -204,24 +203,51 @@ mod tests {
     }
 
     #[test]
-    fn test_node_start_command() {
-        let git_commit = "abcdef012345";
+    fn test_node_start_command_fresh_state() {
+        let network_id = "network0";
         let node_id = "node0";
         let args = vec![
             "mock",
             "node",
             "start",
+            "--network-id",
+            network_id,
             "--node-id",
             node_id,
-            "--git-commit",
-            git_commit,
+            "--fresh-state",
         ];
         let cli = Cli::parse_from(args);
 
         match cli.command {
             Command::Node(NodeCommand::Start(args)) => {
+                assert!(args.fresh_state.fresh_state);
                 assert_eq!(args.node_id(), node_id);
-                assert_eq!(args.network_id(), "default");
+                assert_eq!(args.network_id(), network_id);
+            }
+            _ => panic!("Unexpected command parsed"),
+        }
+    }
+
+    #[test]
+    fn test_node_start_command_non_fresh_state() {
+        let network_id = "network0";
+        let node_id = "node0";
+        let args = vec![
+            "mock",
+            "node",
+            "start",
+            "--network-id",
+            network_id,
+            "--node-id",
+            node_id,
+        ];
+        let cli = Cli::parse_from(args);
+
+        match cli.command {
+            Command::Node(NodeCommand::Start(args)) => {
+                assert!(!args.fresh_state.fresh_state);
+                assert_eq!(args.node_id(), node_id);
+                assert_eq!(args.network_id(), network_id);
             }
             _ => panic!("Unexpected command parsed"),
         }
@@ -253,14 +279,23 @@ mod tests {
 
     #[test]
     fn test_node_logs_command() {
+        let network_id = "network0";
         let node_id = "test";
-        let args = vec!["mock", "node", "dump-mina-logs", "--node-id", node_id];
+        let args = vec![
+            "mock",
+            "node",
+            "dump-mina-logs",
+            "--network-id",
+            network_id,
+            "--node-id",
+            node_id,
+        ];
         let cli = Cli::parse_from(args);
 
         match cli.command {
             Command::Node(NodeCommand::DumpMinaLogs(args)) => {
                 assert_eq!(args.node_id(), node_id);
-                assert_eq!(args.network_id(), "default");
+                assert_eq!(args.network_id(), network_id);
             }
             _ => panic!("Unexpected command parsed"),
         }
