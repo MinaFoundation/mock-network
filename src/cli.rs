@@ -49,9 +49,13 @@ pub struct CreateNetworkArgs {
     #[clap(short = 'n', long)]
     pub network_id: String,
 
-    /// Genesis ledger, constants, proof config, topology, etc (JSON)
-    #[clap(short = 'c', long)]
-    pub test_config: std::path::PathBuf,
+    /// Runtime config path (JSON)
+    #[clap(short = 'r', long)]
+    pub runtime_config: std::path::PathBuf,
+
+    /// Topology file path (JSON)
+    #[clap(short = 't', long)]
+    pub topology: std::path::PathBuf,
 }
 
 #[derive(Subcommand)]
@@ -82,11 +86,6 @@ pub struct FreshState {
     pub fresh_state: bool,
 }
 
-#[derive(Args, Debug)]
-pub struct GitCommit {
-    #[clap(short = 'g', long)]
-    pub git_commit: String,
-}
 
 #[derive(Args, Debug)]
 pub struct NodeCommandArgs {
@@ -101,9 +100,6 @@ pub struct NodeCommandArgs {
 pub struct NodeCommandWithCommitArgs {
     #[clap(flatten)]
     pub fresh_state: FreshState,
-
-    #[clap(flatten)]
-    pub git_commit: GitCommit,
 
     #[clap(flatten)]
     pub network_id: NetworkId,
@@ -140,22 +136,26 @@ mod tests {
     #[test]
     fn test_network_create_command() {
         let network_id = "network0";
-        let test_config_file = "/path/to/test/config";
+        let runtime_config_path = "/path/to/runtime/config";
+        let topology_path = "/path/to/topology/file";
         let args = vec![
             "mock",
             "network",
             "create",
             "--network-id",
             network_id,
-            "--test-config",
-            test_config_file,
+            "--runtime-config",
+            runtime_config_path,
+            "--topology",
+            topology_path,
         ];
         let cli = Cli::parse_from(args);
 
         match cli.command {
             Command::Network(NetworkCommand::Create(args)) => {
                 assert_eq!(args.network_id, network_id);
-                assert_eq!(args.test_config, PathBuf::from(test_config_file));
+                assert_eq!(args.runtime_config, PathBuf::from(runtime_config_path));
+                assert_eq!(args.topology, PathBuf::from(topology_path));
             }
             _ => panic!("Unexpected command parsed"),
         }
