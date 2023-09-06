@@ -4,7 +4,7 @@ pub mod network {
     #[derive(Debug, Serialize)]
     pub struct Create {
         pub network_id: String,
-        pub node_map: std::collections::HashMap<String, super::node::Info>,
+        pub nodes: std::collections::HashMap<String, super::node::Info>,
     }
 
     #[derive(Debug, Serialize)]
