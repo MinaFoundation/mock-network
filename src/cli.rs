@@ -51,7 +51,7 @@ pub struct CreateNetworkArgs {
 
     /// Runtime config path (JSON)
     #[clap(short = 'r', long)]
-    pub runtime_config: std::path::PathBuf,
+    pub genesis_ledger: std::path::PathBuf,
 
     /// Topology file path (JSON)
     #[clap(short = 't', long)]
@@ -135,16 +135,16 @@ mod tests {
     #[test]
     fn test_network_create_command() {
         let network_id = "network0";
-        let runtime_config_path = "/path/to/runtime/config";
-        let topology_path = "/path/to/topology/file";
+        let genesis_ledger_path = "/path/to/genesis_ledger.json";
+        let topology_path = "/path/to/topology.json";
         let args = vec![
             "mock",
             "network",
             "create",
             "--network-id",
             network_id,
-            "--runtime-config",
-            runtime_config_path,
+            "--genesis-ledger",
+            genesis_ledger_path,
             "--topology",
             topology_path,
         ];
@@ -153,7 +153,7 @@ mod tests {
         match cli.command {
             Command::Network(NetworkCommand::Create(args)) => {
                 assert_eq!(args.network_id, network_id);
-                assert_eq!(args.runtime_config, PathBuf::from(runtime_config_path));
+                assert_eq!(args.genesis_ledger, PathBuf::from(genesis_ledger_path));
                 assert_eq!(args.topology, PathBuf::from(topology_path));
             }
             _ => panic!("Unexpected command parsed"),
