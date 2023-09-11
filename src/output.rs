@@ -86,6 +86,7 @@ pub mod node {
         pub logs: String,
         pub network_id: String,
         pub node_id: String,
+        pub start_slot_since_genesis: u32,
     }
 }
 

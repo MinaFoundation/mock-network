@@ -71,7 +71,7 @@ pub enum NodeCommand {
     /// Get precomputed blocks from a node
     DumpPrecomputedBlocks(NodeCommandArgs),
     /// Get logs by replaying an archive node's database
-    RunReplayer(NodeCommandArgs),
+    RunReplayer(ReplayerCommandArgs),
 }
 
 #[derive(Args, Debug)]
@@ -84,6 +84,12 @@ pub struct NodeId {
 pub struct FreshState {
     #[clap(short = 'f', long)]
     pub fresh_state: bool,
+}
+
+#[derive(Args, Debug)]
+pub struct Slot {
+    #[clap(short = 's', long)]
+    pub start_slot_since_genesis: u32,
 }
 
 #[derive(Args, Debug)]
@@ -107,6 +113,18 @@ pub struct NodeCommandStartArgs {
     pub node_id: NodeId,
 }
 
+#[derive(Args, Debug)]
+pub struct ReplayerCommandArgs {
+    #[clap(flatten)]
+    pub network_id: NetworkId,
+
+    #[clap(flatten)]
+    pub node_id: NodeId,
+
+    #[clap(flatten)]
+    pub start_slot_since_genesis: Slot,
+}
+
 impl NodeCommandArgs {
     pub fn node_id(&self) -> &str {
         &self.node_id.node_id
@@ -118,6 +136,16 @@ impl NodeCommandArgs {
 }
 
 impl NodeCommandStartArgs {
+    pub fn node_id(&self) -> &str {
+        &self.node_id.node_id
+    }
+
+    pub fn network_id(&self) -> &str {
+        &self.network_id.network_id
+    }
+}
+
+impl ReplayerCommandArgs {
     pub fn node_id(&self) -> &str {
         &self.node_id.node_id
     }

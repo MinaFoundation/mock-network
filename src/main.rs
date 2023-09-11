@@ -79,6 +79,7 @@ fn main() {
                     logs: "log0\nlog1\nlog2".to_string(),
                     network_id: cmd.network_id().to_string(),
                     node_id: cmd.node_id().to_string(),
+                    start_slot_since_genesis: 0,
                 });
             }
         },
