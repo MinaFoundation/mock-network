@@ -28,7 +28,7 @@ Navigate to your local `mina` repo and run the abstract engine with the mock net
 ```sh
 dune exec src/app/test_executive/test_executive.exe abstract mock \
   --mina-image mock \
-  --config ./integration_tests/mock_config.json \
+  --config ./integration_tests/config/mock.json \
   | tee mina.log | logproc -i inline -f '!(.level in ["Spam", "Debug"])'
 ```
 
@@ -37,7 +37,7 @@ By default, the test executive uses the value of the `MINA_NETWORK_RUNNER` env v
 ```sh
 dune exec src/app/test_executive/test_executive.exe abstract mock \
   --mina-image mock \
-  --config ./integration_tests/mock_config.json \
-  --network-runner absolute/path/to/mock-network/binary \
+  --config ./integration_tests/config/mock.json \
+  --network-runner path/to/mock-network/binary \
   | tee mina.log | logproc -i inline -f '!(.level in ["Spam", "Debug"])'
 ```
