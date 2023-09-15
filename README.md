@@ -1,6 +1,6 @@
 # mock-network
 
-This is a simple mock network for Mina's [integration test abstract engine](https://github.com/MinaProtocol/mina/tree/develop/src/lib/integration_test_abstract_engine).
+This is a simple mock network for Mina's [integration test abstract engine](https://github.com/MinaFoundation/mina/tree/abstract_engine/src/lib/integration_test_abstract_engine). All it does it return the expected network start up data to Lucy and bails before any node interactions begin.
 
 ## Usage with the [test executive](https://github.com/MinaProtocol/mina/tree/develop/src/app/test_executive)
 
@@ -17,24 +17,27 @@ Build the binary
 cargo build
 ```
 
-Set the `MOCK_NETWORK` environment variable
+Set the `MINA_NETWORK_RUNNER` environment variable
 
 ```sh
-export MOCK_NETWORK=$(pwd)/target/debug/mock
+export MINA_NETWORK_RUNNER=$(pwd)/target/debug/mock
 ```
 
-Navigate to your local `mina` repo and run the abstract engine with the mock network from the project root (assuming you have an alias `test_executive` for `src/app/test_executive/test_executive.exe`)
+Navigate to your local `mina` repo and run the abstract engine with the mock network from the project root
 
 ```sh
-test_executive abstract mock --mina-image mock --config ./integration_tests/mock_config.json \
-  | tee mina.log \
-  | logproc -i inline -f '!(.level in ["Spam", "Debug"])'
+dune exec src/app/test_executive/test_executive.exe abstract mock \
+  --mina-image mock \
+  --config ./integration_tests/mock_config.json \
+  | tee mina.log | logproc -i inline -f '!(.level in ["Spam", "Debug"])'
 ```
 
-By default, the test executive uses the value of the `MOCK_NETWORK` env var. Alternatively, the mock network binary can be passed explicitly to the test executive via the `--mock` flag like so
+By default, the test executive uses the value of the `MINA_NETWORK_RUNNER` env var. Alternatively, the mock network binary can be passed explicitly to the test executive via the `--network-runner` flag like so
 
 ```sh
-test_executive abstract mock --mina-image mock --config ./integration_tests/mock_config.json --mock 'MOCK_NETWORK=/absolute/path/to/mock-network/binary' \
-  | tee mina.log \
-  | logproc -i inline -f '!(.level in ["Spam", "Debug"])'
+dune exec src/app/test_executive/test_executive.exe abstract mock \
+  --mina-image mock \
+  --config ./integration_tests/mock_config.json \
+  --network-runner absolute/path/to/mock-network/binary \
+  | tee mina.log | logproc -i inline -f '!(.level in ["Spam", "Debug"])'
 ```
